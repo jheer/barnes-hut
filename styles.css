@@ -1,0 +1,44 @@
+/* Put your custom styles here */
+
+/* Corrections for fixed component layout. */
+.fixed {
+  flex-direction: column;
+  align-items: left;
+  justify-content: center;
+}
+
+/* Action link styling. */
+.action {
+  font-weight: 500;
+  border-bottom: 1px dashed #888;
+  cursor: pointer;
+}
+
+.action:hover {
+  border-bottom: 1px dashed firebrick;
+  color: firebrick;
+}
+
+/* Colors for Barnes-Hut theta values. */
+.color0 {
+  color: rgb(59, 15, 112);
+  border-bottom: 1px dashed rgb(59, 15, 112);
+}
+.color1 {
+  color: rgb(140, 41, 129);
+  border-bottom: 1px dashed rgb(140, 41, 129);
+}
+.color2 {
+  color: rgb(222, 73, 104);
+  border-bottom: 1px dashed rgb(222, 73, 104);
+
+}
+.color3 {
+  color: rgb(254, 159, 109);
+  border-bottom: 1px dashed rgb(254, 159, 109);
+}
+
+/* Animation for Vega plot elements. */
+svg.marks text, svg.marks path {
+  transition: opacity 0.5s;
+}

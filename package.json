@@ -1,0 +1,27 @@
+{
+  "name": "barnes-hut",
+  "version": "1.0.0",
+  "author": {
+    "name": "Jeffrey Heer",
+    "url": "http://idl.cs.washington.edu"
+  },
+  "license": "BSD-3-Clause",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jheer/barnes-hut.git"
+  },
+  "scripts": {
+    "start": "idyll index.idl --css styles.css --theme github --watch",
+    "build": "idyll index.idl --theme github --css styles.css; cp -r {images,fonts} build/;",
+    "deploy": "npm run build && gh-pages -d ./build"
+  },
+  "dependencies": {
+    "d3": "^4.11.0",
+    "idyll": "^2.0.3",
+    "idyll-d3-component": "^2.0.3",
+    "vega": "^3.0.7"
+  },
+  "devDependencies": {
+    "gh-pages": "^0.12.0"
+  }
+}

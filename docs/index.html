@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+      <title>
+        The Barnes-Hut Approximation
+      </title>
+      <meta property="og:title" content="The Barnes-Hut Approximation">
+    <meta charset="utf-8">
+    <meta property="og:type" content="article">
+
+      <meta property="og:description" content="Efficient computation of N-body forces">
+      <meta property="description" content="Efficient computation of N-body forces">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div id="idyll-mount"><div class="idyll-root" data-reactroot=""><div class="article-header"><h1 class="hed">The Barnes-Hut Approximation</h1><h2 class="dek">Efficient computation of N-body forces</h2><div class="byline">By: <a href="http://jheer.org">Jeffrey Heer</a></div></div><div style="position:fixed" class="fixed"><div style="width:100%"></div></div><p>Computers can serve as exciting tools for discovery, with which we can
+model and explore complex phenomena. For example, to test theories about
+the formation of the universe, we can perform <em><!-- -->simulations</em> to predict
+how galaxies evolve. To do this, we could gather the estimated mass and
+location of stars and then model their gravitational interactions over time.</p><p>Another avenue for discovery is to <em><!-- -->visualize</em> complex information to
+reveal structure and patterns. Consider this network diagram, showing
+connections between people in a social network. We might use such diagrams
+to examine community groups and identify people who bridge between them.</p><p>Though they may seem quite different at first, these two examples share
+a common need: they require computing forces that arise from pairwise
+interactions among a set of points, often referred to as an <em><!-- -->N-body problem</em>.
+In the case of astronomical simulation, we seek to model the
+gravitational forces among stars. In the case of network visualization,
+we compute the layout using a similar physical simulation:
+nodes in the network act as charged particles that repel each other, while
+links act as springs that pull related nodes together.</p><p><em>To get a sense of how this force-directed layout works, drag the nodes or
+use the slider to adjust the force strength.</em> Negative values indicate
+repulsive forces, while positive values indicate attractive forces.</p><section><em>Force Strength </em><input type="range" value="-30" min="-30" max="10" step="1"/><span>-30.00</span></section><p>A straightforward approach to computing N-body forces is to consider all
+pairs of individual points and add up the contributions of each
+interaction. This naïve scheme has <em><!-- -->quadratic complexity</em>: as the number
+of points <i><!-- -->n</i> increases, the running time grows proportionally
+to <i><!-- -->n</i><sup>2</sup>, quickly leading to intractably long calculations.
+How might we do better?</p><h1>The Barnes-Hut Algorithm</h1><p>To accelerate computation and make large-scale simulations possible, the
+astronomers Josh Barnes and Piet Hut devised a clever scheme.
+The key idea is to approximate long-range
+forces by replacing a group of distant points with their center
+of mass. In exchange for a small amount of error,
+this scheme significantly speeds up calculation, with
+complexity <i><!-- -->n log n</i> rather than <i><!-- -->n</i><sup>2</sup>.</p><p>Central to this approximation is a <em><!-- -->spatial index</em>: a “map” of space
+that helps us model groups of points as a single center of mass. In
+two dimensions, we can use a <a href="https://en.wikipedia.org/wiki/Quadtree"><!-- -->quadtree</a>
+data structure, which recursively
+subdivides square regions of space into four equal-sized quadrants. (In three dimensions, one can use an analogous <a href="https://en.wikipedia.org/wiki/Octree"><!-- -->octree</a>  that divides a cubic volume into eight sub-cubes.)</p><p>The Barnes-Hut algorithm consists of three basic steps:</p><ol><li>Construct the spatial index (e.g., quadtree)</li><li>Calculate centers of mass</li><li>Estimate forces</li></ol><p>
+Let’s explore each step in turn. We will assume we are computing <em><!-- -->repulsive</em>
+forces for the purposes of network layout. This setup is akin to modeling
+anti-gravity or electric forces with similarly-charged particles. While we
+will use the term “center of mass”, this could readily
+be replaced with “center of charge”.</p><em>As you read through, click the </em><span __expr__="[object Object]" class="action">action links</span><em> to update the diagram!</em><h2>Step <!-- -->1<!-- -->: Construct the Quadtree</h2><p>We begin with <span __expr__="[object Object]" class="action"><!-- -->a set of
+two-dimensional points as input</span>.
+When we <span __expr__="[object Object]" class="action"><!-- -->insert the first point into
+the quadtree</span>, it is added to the top-level root cell of the tree.</p><p><span __expr__="[object Object]" class="action">Next we insert another point</span>,
+which requires expanding the tree by subdiving the space.
+Upon <span __expr__="[object Object]" class="action"><!-- -->each subsequent
+insertion</span>, more fine-grained cells may be added until all points
+reside in their own cell.</p><p><em>Advance the slider to add each point and produce the full quadtree</em>.</p><section><em>Inserted Points </em><input type="range" value="0" min="0" max="77" step="1"/><span>0</span></section><h2>Step <!-- -->2<!-- -->: Calculate Centers of Mass</h2><p>After quadtree construction, <span __expr__="[object Object]" class="action"><!-- --> we calculate centers of mass for each cell of the tree</span>.
+The center of mass of a quadtree cell is simply the weighted
+average of the centers of its four child cells.</p><p>We visit the leaf node cells first and then visit subsequent parent
+cells, merging data as we pass upwards through the tree.
+Once the traversal completes, each cell has been updated with the
+position and strength of its center of mass.</p><h2>Step <!-- -->3<!-- -->: Estimate N-Body Forces</h2><p>Now we are ready to estimate forces!</p><p><span __expr__="[object Object]" class="action">To measure forces at a given
+point, let&#x27;s add a &quot;probe&quot; to our diagram</span> (<svg width="18" height="12"><circle cx="6" cy="6" r="4" fill="white" stroke-width="1.5" stroke="#800080"></circle><path d="M6,6L16,6" fill="none" stroke-linecap="round" stroke-width="1.5" stroke="#800080"></path></svg>). The purple
+line extending from the probe indicates the direction and magnitude of
+the total force at that location. (To promote visibility,
+the purple line is three times longer than the actual
+pixel distance the probe would be moved in a single timestep of
+the force simulation.) The dotted lines extending to the probe
+represent the force components exerted by individual points.</p><p><em>Move the probe (click or
+drag in the visualization) to explore the force field</em>.</p><p>Ignoring the quadtree, we can naïvely calculate forces by summing the
+contributions of <em><!-- -->all</em> individual points. Of course, we would instead like
+to use the quadtree to accelerate calculation and approximate long-range
+forces. Rather than compute interactions among individual
+points, <span __expr__="[object Object]" class="action"><!-- -->we can compute interactions
+with centers of mass, using smaller quadtree cells for nearer points and
+larger cells for more distant points.</span></p><p>At this point we’ve skipped a critical detail: what constitutes
+“long-range” versus “short-range” forces? We consider both
+the <em><!-- -->distance</em> to the center of a quadtree cell and that cell’s <em><!-- -->width</em>.
+If the ratio <em><!-- -->width / distance</em> falls below a chosen threshold
+(a parameter named <em><!-- -->theta</em>), we treat the quadtree cell as a
+source of long-range forces and use its center of mass.
+Otherwise, we will recursively visit the child cells in the quadtree.</p><p>When theta = 1, a quadtree cell’s center of mass will be used — and its
+internal points ignored — if the distance from the sample point to the
+cell’s center is greater than or equal to the cell’s width.</p><p><em>Adjust the theta parameter to view its effect on force estimation</em>. How does
+the number of considered points change based on the probe location and theta?
+How does the direction and magnitude of the total force vary with theta?</p><section><em>Theta </em><input type="range" value="0" min="0" max="2" step="0.1"/><span>0.00</span></section><p>We can now perform force estimation for each individual point, using the
+Barnes-Hut approximation to limit the total number of comparisons!</p><h1>Performance Analysis</h1><p>To assess the performance of the Barnes-Hut approximation, let’s look at
+both the running time and accuracy of force estimation. We will compare
+naïve (<i><!-- -->n</i><sup>2</sup>) calculation to different settings of the theta
+parameter.</p><p>We will take measurements using different point sets,
+ranging from 500 to 10,000 points. For each point count,
+we average the results from 50 separate runs of force estimation,
+each time using a different set of points placed at uniformly
+random coordinates within a 900 x 500 pixel rectangle.</p><div style="width:100%"></div><p>The running time results confirm that the Barnes-Hut
+approximation can significantly speed-up computation.
+As expected, the<span><!-- --> <span class="color0">naïve approach</span></span>
+exhibits a quadratic relationship, whereas increasing the theta parameter
+leads to faster calculations. A low setting of<span><!-- --> <span class="color1">theta=0.5</span></span>
+does not fare better than the naïve
+approach until processing about 6,000 points. Until that point,
+the overhead of quadtree construction and center of mass
+calculation outstrips any gains in force
+estimation. For<span><!-- --> <span class="color2">theta=1</span></span> and<span><!-- --> <span class="color3">theta=1.5</span></span>,
+however, we see a
+significant improvement in running time, with similar
+performance for each.</p><p>To evaluate approximation error, we measure the average vector
+distance between the results of the naïve scheme and Barnes-Hut.
+In the context of a force-directed graph layout, this error
+represents the difference (in pixels) between node positions after
+applying the naïve and approximate methods.</p><div style="width:100%"></div><p>Looking at the error results, we first see that the average
+error is relatively small: only ~5% of a single pixel in
+difference! However, we should take care in interpreting these
+results, as we use the <em><!-- -->average</em> error per point and
+the <em><!-- -->maximum</em> error may be substantially higher. While<span><!-- --> <span class="color2">theta=1</span></span> and<span><!-- --> <span class="color3">theta=1.5</span></span> exhibit similar <em><!-- -->running times</em>,
+here we see notably higher <em><!-- -->error rates</em> for<span><!-- --> <span class="color3">theta=1.5</span></span>
+versus<span><!-- --> <span class="color2">theta=1</span></span> and<span><!-- --> <span class="color1">theta=0.5</span></span>.</p><p>These results suggest that a good default value for theta
+— with low running time <em><!-- -->and</em> low approximation error
+— is around 1.0. Indeed, in practice it is common to see default
+settings slightly below 1. In
+visualization applications, where errors on the order of a few
+pixels are not a problem, even higher theta values may be used
+without issue.</p><h1>Conclusion</h1><p>The Barnes-Hut algorithm has had a major impact on both physical
+simulation and network visualization, enabling n-body calculations
+to scale to much larger data sets than naïve force calculation permits.</p><p><span __expr__="[object Object]" class="action">Returning to our initial
+network diagram</span>, we can use Barnes-Hut to efficiently compute
+repulsive forces at each timestep. For each animation frame, we perform the
+approximation anew, creating a new quadtree, accumulating centers of mass,
+and (approximately) estimating forces.</p><p>Want to learn more or apply Barnes-Hut in your own work?</p><ul><li>The popular <a href="https://d3js.org"><!-- -->D3.js</a> library by Mike Bostock includes Barnes-Hut for performing force-directed layout as part of the <a href="https://github.com/d3/d3-force"><!-- -->d3-force module</a>. The examples in this article are based on the D<!-- -->3<!-- --> implementation.</li><li>For more details, including pseudo-code and performance analysis, Prof. James Demmel of UC Berkeley has <a href="https://people.eecs.berkeley.edu/~demmel/cs267/lecture26/lecture26.html"><!-- -->online lecture notes on the Barnes-Hut algorithm</a>. These notes provided my first introduction to the technique<!-- -->!</li><li>While the error of the Barnes-Hut approximation is acceptable in a variety of applications, sometimes greater precision is needed. In such cases, more complicated schemes such as the <a href="https://en.wikipedia.org/wiki/Fast_multipole_method"><!-- -->Fast Multipole Method</a> can be used in lieu of Barnes-Hut.</li></ul><p>
+This article was created using <a href="http://idyll-lang.org/"><!-- -->Idyll</a>, with
+visualizations powered by <a href="https://d3js.org/"><!-- -->D3</a>
+and <a href="https://vega.github.io/vega/"><!-- -->Vega</a>. <a href="https://github.com/jheer/barnes-hut"><!-- -->Source code is available on GitHub</a>.</p></div></div>
+    <script src="index.js"></script>
+  </body>
+</html>
