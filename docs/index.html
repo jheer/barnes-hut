@@ -30,7 +30,7 @@ we compute the layout using a similar physical simulation:
 nodes in the network act as charged particles that repel each other, while
 links act as springs that pull related nodes together.</p><p><em>To get a sense of how this force-directed layout works, drag the nodes or
 use the slider to adjust the force strength.</em> Negative values indicate
-repulsive forces, while positive values indicate attractive forces.</p><section><em>Force Strength </em><input type="range" value="-30" min="-30" max="10" step="1"/><span>-30.00</span></section><p>A straightforward approach to computing N-body forces is to consider all
+repulsive forces, while positive values indicate attractive forces.</p><p><em>Force Strength </em><input type="range" value="-30" min="-30" max="10" step="1"/><span>-30.00</span></p><p>A straightforward approach to computing N-body forces is to consider all
 pairs of individual points and add up the contributions of each
 interaction. This naïve scheme has <em><!-- -->quadratic complexity</em>: as the number
 of points <i><!-- -->n</i> increases, the running time grows proportionally
@@ -57,7 +57,7 @@ the quadtree</span>, it is added to the top-level root cell of the tree.</p><p><
 which requires expanding the tree by subdiving the space.
 Upon <span __expr__="[object Object]" class="action"><!-- -->each subsequent
 insertion</span>, more fine-grained cells may be added until all points
-reside in their own cell.</p><p><em>Advance the slider to add each point and produce the full quadtree</em>.</p><section><em>Inserted Points </em><input type="range" value="0" min="0" max="77" step="1"/><span>0</span></section><h2>Step <!-- -->2<!-- -->: Calculate Centers of Mass</h2><p>After quadtree construction, <span __expr__="[object Object]" class="action"><!-- --> we calculate centers of mass for each cell of the tree</span>.
+reside in their own cell.</p><p><em>Advance the slider to add each point and produce the full quadtree</em>.</p><p><em>Inserted Points </em><input type="range" value="0" min="0" max="77" step="1"/><span>0</span></p><h2>Step <!-- -->2<!-- -->: Calculate Centers of Mass</h2><p>After quadtree construction, <span __expr__="[object Object]" class="action"><!-- --> we calculate centers of mass for each cell of the tree</span>.
 The center of mass of a quadtree cell is simply the weighted
 average of the centers of its four child cells.</p><p>We visit the leaf node cells first and then visit subsequent parent
 cells, merging data as we pass upwards through the tree.
@@ -86,7 +86,7 @@ Otherwise, we will recursively visit the child cells in the quadtree.</p><p>When
 internal points ignored — if the distance from the sample point to the
 cell’s center is greater than or equal to the cell’s width.</p><p><em>Adjust the theta parameter to view its effect on force estimation</em>. How does
 the number of considered points change based on the probe location and theta?
-How does the direction and magnitude of the total force vary with theta?</p><section><em>Theta </em><input type="range" value="0" min="0" max="2" step="0.1"/><span>0.00</span></section><p>We can now perform force estimation for each individual point, using the
+How does the direction and magnitude of the total force vary with theta?</p><p><em>Theta </em><input type="range" value="0" min="0" max="2" step="0.1"/><span>0.00</span></p><p>We can now perform force estimation for each individual point, using the
 Barnes-Hut approximation to limit the total number of comparisons!</p><h1>Performance Analysis</h1><p>To assess the performance of the Barnes-Hut approximation, let’s look at
 both the running time and accuracy of force estimation. We will compare
 naïve (<i><!-- -->n</i><sup>2</sup>) calculation to different settings of the theta

@@ -4,6 +4,9 @@ const graph = require('./data-network'),
       nodes = graph.nodes,
       links = graph.links;
 
+const quadColor = '#d5aaaa',
+      pointColor = 'firebrick';
+
 // helper function to map from d3.mouse array to x/y object
 function toPoint(xy) {
   return {x: xy[0], y: xy[1]};
@@ -44,6 +47,7 @@ module.exports = function(dom, opt) {
       layout = true,
       active = false,
       probePoint = defaultProbe,
+      probeDown = false,
       es, ns, obj;
 
 
@@ -151,13 +155,22 @@ module.exports = function(dom, opt) {
   }
 
   function onProbeMove() {
-    if (active && d3.event.buttons) {
+    if (active && probeDown) {
       probe(toPoint(d3.mouse(this)));
     }
   }
 
+  function onProbeUp() {
+    probeDown = false;
+    window.removeEventListener('mouseup', onProbeUp);
+  }
+
   function onProbeDown() {
     if (!active) return;
+
+    probeDown = true;
+    window.addEventListener('mouseup', onProbeUp);
+
     let t = d3.event.target;
     probe((t && t.localName == 'circle')
       ? t.__data__
@@ -318,7 +331,7 @@ module.exports = function(dom, opt) {
         .attr('height', d => d.h)
         .style('pointer-events', 'none')
         .style('fill', 'none')
-        .style('stroke', 'd5aaaa')
+        .style('stroke', quadColor)
         .style('stroke-width', 2)
         .style('stroke-opacity', 1)
        .transition()
@@ -338,7 +351,7 @@ module.exports = function(dom, opt) {
       .attr('cy', d => d.y)
       .attr('r', 0)
       .style('pointer-events', 'none')
-      .style('fill', 'firebrick')
+      .style('fill', pointColor)
       .style('fill-opacity', 1)
      .transition()
       .duration(duration)
@@ -395,7 +408,7 @@ module.exports = function(dom, opt) {
           .attr('height', (d) => d.h)
           .style('pointer-events', 'none')
           .style('fill', 'none')
-          .style('stroke', 'd5aaaa')
+          .style('stroke', quadColor)
           .style('stroke-width', 2)
           .style('stroke-opacity', 1)
         .transition()
@@ -411,7 +424,7 @@ module.exports = function(dom, opt) {
           .attr('cy', (d) => d.y)
           .attr('r', (d) => baseRadius * (Math.sqrt(d.value) || 1))
           .style('pointer-events', 'none')
-          .style('fill', 'firebrick')
+          .style('fill', pointColor)
         .transition()
           .delay(duration)
           .duration(duration)
@@ -426,7 +439,7 @@ module.exports = function(dom, opt) {
           .attr('cy', (d) => d.y)
           .attr('r', 0)
           .style('pointer-events', 'none')
-          .style('fill', 'firebrick')
+          .style('fill', pointColor)
         .transition()
           .delay(duration * 1.8)
           .duration(duration)
@@ -544,7 +557,7 @@ module.exports = function(dom, opt) {
       .attr('height', d => d.h)
       .style('pointer-events', 'none')
       .style('fill', 'none')
-      .style('stroke', 'd5aaaa')
+      .style('stroke', quadColor)
       .style('stroke-width', 2);
 
     lg.selectAll('path').data(charges)
@@ -563,7 +576,7 @@ module.exports = function(dom, opt) {
       .attr('cy', d => d.y)
       .attr('r', d => baseRadius * (Math.sqrt(d.v) || 1))
       .style('pointer-events', 'none')
-      .style('fill', 'firebrick');
+      .style('fill', pointColor);
 
     ns.style('fill-opacity', 0.25);
 

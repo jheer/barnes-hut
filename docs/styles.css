@@ -837,6 +837,11 @@ hr {
   justify-content: center;
 }
 
+/* Range slider layout correction. */
+input[type="range"] {
+  margin: 0 10px;
+}
+
 /* Action link styling. */
 .action {
   font-weight: 500;

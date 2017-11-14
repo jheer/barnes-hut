@@ -51,11 +51,11 @@ _To get a sense of how this force-directed layout works, drag the nodes or
 use the slider to adjust the force strength._ Negative values indicate
 repulsive forces, while positive values indicate attractive forces.
 
-[section]
+[p]
   [em]Force Strength [/em]
   [Range min:-30 max:10 step:1 value:charge /]
   [Display value:charge /]
-[/section]
+[/p]
 
 A straightforward approach to computing N-body forces is to consider all
 pairs of individual points and add up the contributions of each
@@ -114,11 +114,11 @@ reside in their own cell.
 
 _Advance the slider to add each point and produce the full quadtree_.
 
-[section]
+[p]
   [em]Inserted Points [/em]
   [Range min:0 max:77 step:1 value:step /]
   [Display value:`step;` format:"d" /]
-[/section]
+[/p]
 
 
 // Accumulate
@@ -179,11 +179,11 @@ _Adjust the theta parameter to view its effect on force estimation_. How does
 the number of considered points change based on the probe location and theta?
 How does the direction and magnitude of the total force vary with theta?
 
-[section]
+[p]
   [em]Theta [/em]
   [Range min:0 max:2 step:0.1 value:theta /]
   [Display value:theta /]
-[/section]
+[/p]
 
 We can now perform force estimation for each individual point, using the
 Barnes-Hut approximation to limit the total number of comparisons!
